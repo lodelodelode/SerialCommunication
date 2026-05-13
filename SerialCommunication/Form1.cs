@@ -14,6 +14,8 @@ namespace SerialCommunication
 {
     public partial class Form1 : Form
     {
+        private int tabControl_SelectedIndex;
+
         public Form1()
         {
             InitializeComponent();
@@ -179,6 +181,110 @@ namespace SerialCommunication
                 radioButtonVerbonden.Checked = false;
                 buttonConnect.Text = "Connect";
             }
+        }
+
+        private void trackBarPWM9_Scroll(object sender, EventArgs e)
+        {
+            try 
+            {
+                if (serialPortArduino.IsOpen)
+                {
+                    string commando = string.Format("set pwm9 {0}", trackBarPWM9.Value);
+                    serialPortArduino.WriteLine(commando);
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "error:" + exception.Message;
+                serialPortArduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
+        }
+
+        private void trackBarPWM10_Scroll(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPortArduino.IsOpen)
+                {
+                    string commando = string.Format("set pwm10 {0}", trackBarPWM10.Value);
+                    serialPortArduino.WriteLine(commando);
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "error:" + exception.Message;
+                serialPortArduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
+        }
+
+        private void trackBarPWM11_Scroll(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPortArduino.IsOpen)
+                {
+                    string commando = string.Format("set pwm11 {0}", trackBarPWM11.Value);
+                    serialPortArduino.WriteLine(commando);
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "error:" + exception.Message;
+                serialPortArduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPortArduino.IsOpen)
+                {
+                    serialPortArduino.ReadExisting();
+                    string commando = "get d5";
+                    serialPortArduino.WriteLine(commando);
+                    string antwoord = serialPortArduino.ReadLine();
+                    antwoord = antwoord.Trim();
+                    antwoord = antwoord.Substring(4);
+                    radioButtonDigital5.Checked = (antwoord == "1");
+
+                    serialPortArduino.ReadExisting();
+                    commando = "get d6";
+                    serialPortArduino.WriteLine(commando);
+                    antwoord = serialPortArduino.ReadLine();
+                    antwoord = antwoord.Trim();
+                    antwoord = antwoord.Substring(4);
+                    radioButtonDigital5.Checked = (antwoord == "1");
+
+                    serialPortArduino.ReadExisting();
+                    commando = "get d7";
+                    serialPortArduino.WriteLine(commando);
+                    antwoord = serialPortArduino.ReadLine();
+                    antwoord = antwoord.Trim();
+                    antwoord = antwoord.Substring(4);
+                    radioButtonDigital5.Checked = (antwoord == "1");
+
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "error:" + exception.Message;
+                serialPortArduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
+        }
+
+        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            timerOef3.Enabled = tabControl_SelectedIndex == 3;
+
         }
     }
 }
