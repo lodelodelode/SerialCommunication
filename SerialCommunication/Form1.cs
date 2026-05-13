@@ -285,6 +285,7 @@ namespace SerialCommunication
         {
             timerOef3.Enabled = tabControl_SelectedIndex == 3;
             timerOef4.Enabled = tabControl_SelectedIndex == 4;
+            timerOef5.Enabled = tabControl_SelectedIndex == 5;
 
         }
 
@@ -310,6 +311,66 @@ namespace SerialCommunication
             catch (Exception exception)
             {
                 labelStatus.Text = "error:" + exception.Message;
+                serialPortArduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
+        }
+
+        private void timerOef5_Tick(object sender, EventArgs e)
+        {
+          
+            try
+            {
+                if (serialPortArduino.IsOpen)
+                {
+                    double m1 = 40.0 / 1023.0;
+                    double b1 = 5;
+                    double m2 = 500.0 / 1023.0;
+
+                    serialPortArduino.ReadExisting();
+                    string commando = "get a0";
+                    serialPortArduino.WriteLine(commando);
+                    string antwoord = serialPortArduino.ReadLine();
+                    antwoord = antwoord.TrimEnd();
+                    antwoord = antwoord.Substring(4);
+
+                    int value = Int32.Parse(antwoord);
+                    double GewensteTemp = (value * m1 + b1);
+                    labelGewensteTemp.Text = GewensteTemp.ToString("0.0") + "°C";
+
+                    serialPortArduino.ReadExisting();
+                    commando = "get a1";
+                    serialPortArduino.WriteLine(commando);
+                    antwoord = serialPortArduino.ReadLine();
+                    antwoord = antwoord.TrimEnd();
+                    antwoord = antwoord.Substring(4);
+
+                    value = Int32.Parse(antwoord);
+                    double huidigetemp = (value * m2);
+                    labelHuidigeTemp.Text = huidigetemp.ToString("0.0") + "°C";
+
+
+
+                    if (huidigetemp < GewensteTemp) commando = "set d2 high";
+                    else commando = "set d2 low";
+                    serialPortArduino.WriteLine(commando);
+
+
+                }
+                else
+                {
+                    serialPortArduino.Close();
+                    radioButtonVerbonden.Checked = false;
+                    buttonConnect.Text = "Connect";
+                    string commando = "set d2 low";
+                    serialPortArduino.WriteLine(commando);
+
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error: " + exception.Message;
                 serialPortArduino.Close();
                 radioButtonVerbonden.Checked = false;
                 buttonConnect.Text = "Connect";
