@@ -284,7 +284,36 @@ namespace SerialCommunication
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             timerOef3.Enabled = tabControl_SelectedIndex == 3;
+            timerOef4.Enabled = tabControl_SelectedIndex == 4;
 
+        }
+
+        private void timerOef4_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPortArduino.IsOpen)
+                {
+                    serialPortArduino.ReadExisting();
+                    string commando = "get a0";
+                    serialPortArduino.WriteLine(commando);
+                    string antwoord = serialPortArduino.ReadLine();
+                    antwoord = antwoord.TrimEnd();
+                    antwoord= antwoord.Substring(4);
+                    
+                    int Value = Int32.Parse(antwoord);
+                    labelAnalog0.Text = Value.ToString();
+
+
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "error:" + exception.Message;
+                serialPortArduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
         }
     }
 }
